@@ -8,7 +8,7 @@ export default function RootLayout() {
     <ClientsProvider>
       <SchedulesProvider>
         <Stack screenOptions={{ headerShadowVisible: false }}>
-          {/* Telas de Auth sem header */}
+          {}
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ headerShown: false }} />
 
@@ -17,6 +17,9 @@ export default function RootLayout() {
           <Stack.Screen name="clients_register" options={{ title: "Novo Cliente" }} />
           <Stack.Screen name="scheduling" options={{ title: "Novo Agendamento" }} />
           <Stack.Screen name="client_history" options={{ title: "Histórico" }} />
+          
+          {}
+          <Stack.Screen name="register_professional" options={{ title: "Registrar Profissional" }} />
         </Stack>
       </SchedulesProvider>
     </ClientsProvider>

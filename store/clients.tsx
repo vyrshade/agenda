@@ -7,16 +7,18 @@ import {
   doc, 
   query, 
   where, 
-  onSnapshot 
+  onSnapshot,
+  getDoc 
 } from "firebase/firestore";
-import { auth, db } from "../src/config/firebase"; // Confirme se o caminho está correto
+import { auth, db } from "../src/config/firebase";
 
 export type Client = {
   id: string;
   name: string;
   phone: string;
   address?: string;
-  userId?: string; // Para saber de quem é esse cliente
+  userId?: string; 
+  salonId?: string; // Novo campo para identificar o salão
 };
 
 type Ctx = {
@@ -31,32 +33,14 @@ const ClientsContext = createContext<Ctx | null>(null);
 export function ClientsProvider({ children }: { children: ReactNode }) {
   const [clients, setClients] = useState<Client[]>([]);
   const [user, setUser] = useState(auth.currentUser);
+  const [salonId, setSalonId] = useState<string | null>(null);
 
-  // Efeito para monitorar login e buscar dados em tempo real
+  // 1. Monitora mudanças na autenticação
   useEffect(() => {
-    // 1. Monitora se o usuário mudou (login/logout)
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
-
-      if (currentUser) {
-        // 2. Se está logado, cria uma query para buscar SÓ os clientes dele
-        const q = query(
-          collection(db, "clients"), 
-          where("userId", "==", currentUser.uid)
-        );
-
-        // 3. 'onSnapshot' fica ouvindo o banco de dados em tempo real
-        const unsubscribeSnapshot = onSnapshot(q, (querySnapshot) => {
-          const clientsList: Client[] = [];
-          querySnapshot.forEach((doc) => {
-            clientsList.push({ id: doc.id, ...doc.data() } as Client);
-          });
-          setClients(clientsList);
-        });
-
-        return () => unsubscribeSnapshot();
-      } else {
-        // Se deslogou, limpa a lista local
+      if (!currentUser) {
+        setSalonId(null);
         setClients([]);
       }
     });
@@ -64,15 +48,71 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
     return () => unsubscribeAuth();
   }, []);
 
+  // 2. Busca o salonId do usuário quando ele loga
+  useEffect(() => {
+    async function fetchUserSalonId() {
+      if (!user) return;
+      
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const snapshot = await getDoc(userRef);
+        
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          setSalonId(data.salonId || null);
+        } else {
+          setSalonId(null);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
+        setSalonId(null);
+      }
+    }
+
+    fetchUserSalonId();
+  }, [user]);
+
+  // 3. Monitora os clientes filtrando pelo salonId
+  useEffect(() => {
+    if (!salonId) {
+      setClients([]);
+      return;
+    }
+
+    // Query busca clientes pelo salonId (compartilhado)
+    const q = query(
+      collection(db, "clients"), 
+      where("salonId", "==", salonId)
+    );
+
+    const unsubscribeSnapshot = onSnapshot(q, (querySnapshot) => {
+      const clientsList: Client[] = [];
+      querySnapshot.forEach((doc) => {
+        clientsList.push({ id: doc.id, ...doc.data() } as Client);
+      });
+      
+      // Ordena alfabeticamente
+      clientsList.sort((a, b) => a.name.localeCompare(b.name));
+      
+      setClients(clientsList);
+    });
+
+    return () => unsubscribeSnapshot();
+  }, [salonId]);
+
   const addClient = async (c: Omit<Client, "id">) => {
-    if (!user) return; // Segurança extra
+    if (!user || !salonId) {
+      console.warn("Usuário ou Salão não identificados ao criar cliente.");
+      return; 
+    }
+    
     try {
       await addDoc(collection(db, "clients"), {
         ...c,
         userId: user.uid,
-        createdAt: new Date() // Útil para ordenação futura
+        salonId: salonId, // Salva o salonId no cliente
+        createdAt: new Date()
       });
-      // Não precisamos dar setClients, o onSnapshot fará isso sozinho!
     } catch (error) {
       console.error("Erro ao adicionar cliente:", error);
       throw error;
