@@ -2,6 +2,7 @@
 src/config/firebase.ts
 # dependencies
 node_modules/
+.env
 
 # Expo
 .expo/
