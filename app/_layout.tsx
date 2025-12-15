@@ -1,70 +1,47 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { View, ActivityIndicator } from "react-native";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { ClientsProvider } from "../store/clients";
 import { SchedulesProvider } from "../store/schedules";
 import { auth } from "../src/config/firebase";
-import { User } from "firebase/auth";
-
-// Define protected and public routes
-const PROTECTED_ROUTES = new Set([
-  "(tabs)",
-  "user_profile",
-  "clients_register",
-  "scheduling",
-  "client_history",
-  "register_professional"
-]);
-
-const PUBLIC_ROUTES = new Set(["login", "register"]);
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const segments = useSegments();
-  const currentRoute = segments[0];
-  const isAtRoot = segments.length === 0;
 
-  // Listen for authentication state changes
+  // 1. Monitorar estado de autenticação
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setInitializing(false);
+      if (initializing) setInitializing(false);
     });
-
     return unsubscribe;
   }, []);
 
-  // Determine route types
-  const inProtectedRoute = PROTECTED_ROUTES.has(currentRoute);
-  const inPublicRoute = PUBLIC_ROUTES.has(currentRoute);
-
-  // Handle authentication-based navigation
+  // 2. Lógica de Redirecionamento (Auth Guard)
   useEffect(() => {
     if (initializing) return;
 
-    if (!user && (inProtectedRoute || isAtRoot)) {
-      // User is not signed in and trying to access protected routes or at root
+    // Verifica se estamos em uma rota de autenticação (login ou register)
+    // segments[0] pega o primeiro pedaço da URL. Ex: 'login', 'register' ou '(tabs)'
+    const inAuthGroup = segments[0] === "login" || segments[0] === "register";
+
+    if (!user && !inAuthGroup) {
+      // Se NÃO tem usuário e NÃO está na tela de login/registro -> Manda pro Login
       router.replace("/login");
-    } else if (user && (inPublicRoute || isAtRoot)) {
-      // User is signed in but at login/register or root
+    } else if (user && inAuthGroup) {
+      // Se TEM usuário e está na tela de login/registro -> Manda pra Home
       router.replace("/(tabs)");
     }
-  }, [user, initializing, currentRoute, isAtRoot, router]);
+  }, [user, initializing, segments]);
 
-  // Show loading screen while checking auth state
+  // 3. Tela de carregamento enquanto conecta ao Firebase
   if (initializing) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -74,15 +51,18 @@ export default function RootLayout() {
     <ClientsProvider>
       <SchedulesProvider>
         <Stack screenOptions={{ headerShadowVisible: false }}>
+          {/* Rotas de Autenticação */}
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ headerShown: false }} />
-
+          
+          {/* Rotas Protegidas */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="user_profile" options={{ title: "Meu Perfil" }} />
           <Stack.Screen name="clients_register" options={{ title: "Novo Cliente" }} />
           <Stack.Screen name="scheduling" options={{ title: "Novo Agendamento" }} />
           <Stack.Screen name="client_history" options={{ title: "Histórico" }} />
           
+          {/* Outras rotas */}
           <Stack.Screen name="register_professional" options={{ title: "Registrar Profissional" }} />
         </Stack>
       </SchedulesProvider>
