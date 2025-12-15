@@ -1,5 +1,5 @@
 import { Stack, useRouter, useSegments } from "expo-router";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { ClientsProvider } from "../store/clients";
 import { SchedulesProvider } from "../store/schedules";
@@ -32,6 +32,7 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const currentRoute = segments[0];
+  const isAtRoot = segments.length === 0;
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -43,26 +44,22 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  // Memoize route type calculations based on first segment only
-  const { inProtectedRoute, inPublicRoute } = useMemo(() => {
-    return {
-      inProtectedRoute: currentRoute ? PROTECTED_ROUTES.has(currentRoute) : false,
-      inPublicRoute: currentRoute ? PUBLIC_ROUTES.has(currentRoute) : false
-    };
-  }, [currentRoute]);
+  // Determine route types
+  const inProtectedRoute = PROTECTED_ROUTES.has(currentRoute);
+  const inPublicRoute = PUBLIC_ROUTES.has(currentRoute);
 
   // Handle authentication-based navigation
   useEffect(() => {
     if (initializing) return;
 
-    if (!user && (inProtectedRoute || segments.length === 0)) {
+    if (!user && (inProtectedRoute || isAtRoot)) {
       // User is not signed in and trying to access protected routes or at root
       router.replace("/login");
-    } else if (user && (inPublicRoute || segments.length === 0)) {
+    } else if (user && (inPublicRoute || isAtRoot)) {
       // User is signed in but at login/register or root
       router.replace("/(tabs)");
     }
-  }, [user, segments.length, initializing, currentRoute, router]);
+  }, [user, initializing, currentRoute, isAtRoot, router]);
 
   // Show loading screen while checking auth state
   if (initializing) {
