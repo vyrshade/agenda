@@ -18,11 +18,20 @@ const PROTECTED_ROUTES = new Set([
 
 const PUBLIC_ROUTES = new Set(["login", "register"]);
 
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const segments = useSegments();
+  const currentRoute = segments[0];
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -36,12 +45,11 @@ export default function RootLayout() {
 
   // Memoize route type calculations based on first segment only
   const { inProtectedRoute, inPublicRoute } = useMemo(() => {
-    const currentRoute = segments[0];
     return {
       inProtectedRoute: currentRoute ? PROTECTED_ROUTES.has(currentRoute) : false,
       inPublicRoute: currentRoute ? PUBLIC_ROUTES.has(currentRoute) : false
     };
-  }, [segments[0]]);
+  }, [currentRoute]);
 
   // Handle authentication-based navigation
   useEffect(() => {
@@ -54,7 +62,7 @@ export default function RootLayout() {
       // User is signed in but at login/register or root
       router.replace("/(tabs)");
     }
-  }, [user, segments.length, initializing, inProtectedRoute, inPublicRoute, router]);
+  }, [user, segments.length, initializing, currentRoute, router]);
 
   // Show loading screen while checking auth state
   if (initializing) {
@@ -84,11 +92,3 @@ export default function RootLayout() {
     </ClientsProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
