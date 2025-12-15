@@ -1,10 +1,22 @@
 import { Stack, useRouter, useSegments } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import React, { useEffect, useState, useMemo } from "react";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { ClientsProvider } from "../store/clients";
 import { SchedulesProvider } from "../store/schedules";
 import { auth } from "../src/config/firebase";
 import { User } from "firebase/auth";
+
+// Define protected and public routes
+const PROTECTED_ROUTES = new Set([
+  "(tabs)",
+  "user_profile",
+  "clients_register",
+  "scheduling",
+  "client_history",
+  "register_professional"
+]);
+
+const PUBLIC_ROUTES = new Set(["login", "register"]);
 
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
@@ -22,18 +34,18 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
+  // Memoize route type calculations
+  const { inAuthGroup, inPublicGroup } = useMemo(() => {
+    const currentRoute = segments[0];
+    return {
+      inAuthGroup: currentRoute ? PROTECTED_ROUTES.has(currentRoute) : false,
+      inPublicGroup: currentRoute ? PUBLIC_ROUTES.has(currentRoute) : false
+    };
+  }, [segments]);
+
   // Handle authentication-based navigation
   useEffect(() => {
     if (initializing) return;
-
-    const inAuthGroup = segments[0] === "(tabs)" || 
-                        segments[0] === "user_profile" || 
-                        segments[0] === "clients_register" || 
-                        segments[0] === "scheduling" || 
-                        segments[0] === "client_history" ||
-                        segments[0] === "register_professional";
-    
-    const inPublicGroup = segments[0] === "login" || segments[0] === "register";
 
     if (!user && inAuthGroup) {
       // User is not signed in and trying to access protected routes
@@ -48,12 +60,12 @@ export default function RootLayout() {
       // Initial load with user - go to tabs
       router.replace("/(tabs)");
     }
-  }, [user, segments, initializing]);
+  }, [user, segments, initializing, inAuthGroup, inPublicGroup]);
 
   // Show loading screen while checking auth state
   if (initializing) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -78,3 +90,11 @@ export default function RootLayout() {
     </ClientsProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
