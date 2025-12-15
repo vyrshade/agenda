@@ -35,11 +35,11 @@ export default function RootLayout() {
   }, []);
 
   // Memoize route type calculations
-  const { inAuthGroup, inPublicGroup } = useMemo(() => {
+  const { inProtectedRoute, inPublicRoute } = useMemo(() => {
     const currentRoute = segments[0];
     return {
-      inAuthGroup: currentRoute ? PROTECTED_ROUTES.has(currentRoute) : false,
-      inPublicGroup: currentRoute ? PUBLIC_ROUTES.has(currentRoute) : false
+      inProtectedRoute: currentRoute ? PROTECTED_ROUTES.has(currentRoute) : false,
+      inPublicRoute: currentRoute ? PUBLIC_ROUTES.has(currentRoute) : false
     };
   }, [segments]);
 
@@ -47,10 +47,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (initializing) return;
 
-    if (!user && inAuthGroup) {
+    if (!user && inProtectedRoute) {
       // User is not signed in and trying to access protected routes
       router.replace("/login");
-    } else if (user && inPublicGroup) {
+    } else if (user && inPublicRoute) {
       // User is signed in but trying to access login/register
       router.replace("/(tabs)");
     } else if (!user && segments.length === 0) {
@@ -60,7 +60,7 @@ export default function RootLayout() {
       // Initial load with user - go to tabs
       router.replace("/(tabs)");
     }
-  }, [user, segments, initializing, inAuthGroup, inPublicGroup]);
+  }, [user, segments, initializing]);
 
   // Show loading screen while checking auth state
   if (initializing) {
