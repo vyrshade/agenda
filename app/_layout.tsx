@@ -34,14 +34,14 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  // Memoize route type calculations
+  // Memoize route type calculations based on first segment only
+  const currentRoute = segments[0];
   const { inProtectedRoute, inPublicRoute } = useMemo(() => {
-    const currentRoute = segments[0];
     return {
       inProtectedRoute: currentRoute ? PROTECTED_ROUTES.has(currentRoute) : false,
       inPublicRoute: currentRoute ? PUBLIC_ROUTES.has(currentRoute) : false
     };
-  }, [segments]);
+  }, [currentRoute]);
 
   // Handle authentication-based navigation
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function RootLayout() {
       // Initial load with user - go to tabs
       router.replace("/(tabs)");
     }
-  }, [user, segments, initializing]);
+  }, [user, segments, initializing, inProtectedRoute, inPublicRoute, router]);
 
   // Show loading screen while checking auth state
   if (initializing) {
