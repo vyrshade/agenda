@@ -50,7 +50,7 @@ export default function RootLayout() {
   return (
     <ClientsProvider>
       <SchedulesProvider>
-        <Stack screenOptions={{ headerShadowVisible: false }}>
+        <Stack screenOptions={{ headerShadowVisible: false, headerBackTitleVisible: false }}>
           {/* Rotas de Autenticação */}
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ headerShown: false }} />
