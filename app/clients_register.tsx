@@ -10,7 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PrimaryButton from "../components/PrimaryButton";
@@ -20,7 +20,6 @@ export default function ClientsRegister() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
-  // Usando 'as any' temporariamente se o TS reclamar dos tipos, mas o ideal é tipar corretamente
   const { clients, addClient, updateClient, removeClient } = useClients() as any;
 
   const editing = typeof id === "string" && id.length > 0;
@@ -134,7 +133,19 @@ export default function ClientsRegister() {
             />
           </View>
 
-          <View style={{ flex: 1 }} />
+          {/* Botão logo abaixo do último campo */}
+          <View style={[styles.actions, { paddingBottom: insets.bottom + 10 }]}>
+            {isSaving ? (
+              <ActivityIndicator size="large" color="#000" style={{ marginBottom: 0 }} />
+            ) : (
+              <PrimaryButton
+                title={editing ? "Salvar alterações" : "Cadastrar cliente"}
+                rightIconName="save-outline"
+                onPress={handleSave}
+                style={styles.primaryButton}
+              />
+            )}
+          </View>
 
           {editing && (
             <TouchableOpacity
@@ -146,20 +157,6 @@ export default function ClientsRegister() {
               <Ionicons name="trash-outline" size={18} color="#ff3b30" />
               <Text style={styles.dangerText}>Excluir cliente</Text>
             </TouchableOpacity>
-          )}
-        </View>
-
-        {/*  SAFE AREA REAL PARA IOS + ANDROID  */}
-        <View style={[styles.buttonSafeArea, { paddingBottom: insets.bottom + 10 }]}>
-          {isSaving ? (
-            <ActivityIndicator size="large" color="#000" style={{ marginBottom: 20 }} />
-          ) : (
-            <PrimaryButton
-              title={editing ? "Salvar alterações" : "Cadastrar cliente"}
-              rightIconName="save-outline"
-              onPress={handleSave}
-              style={styles.primaryButton}
-            />
           )}
         </View>
       </View>
@@ -194,8 +191,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  actions: {
+    marginTop: 22,
+  },
+
   dangerButton: {
-    marginTop: 10,
+    marginTop: 18,
     height: 48,
     borderRadius: 12,
     borderWidth: 1,
@@ -209,11 +210,6 @@ const styles = StyleSheet.create({
   dangerText: {
     color: "#ff3b30",
     fontWeight: "700",
-  },
-
-  buttonSafeArea: {
-    backgroundColor: "transparent",
-    paddingHorizontal: 10,
   },
 
   primaryButton: {

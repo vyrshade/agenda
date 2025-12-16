@@ -1,13 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-    ActivityIndicator,
-    StyleProp,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    ViewStyle,
+  ActivityIndicator,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
 import { COLORS } from "../theme/colors";
 
@@ -45,28 +45,20 @@ export default function PrimaryButton({
       disabled={isDisabled}
     >
       <View style={styles.content}>
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        {/* Para manter o texto centralizado, usamos um slot à direita de largura fixa */}
+        <View style={styles.textWrapper}>
           <Text style={[styles.text, { color: textColor }]} numberOfLines={1}>
             {title}
           </Text>
         </View>
 
-        {rightIconName && !loading && (
-          <Ionicons
-            name={rightIconName}
-            size={20}
-            color={textColor}
-            style={styles.iconRight}
-          />
-        )}
-
-        {loading && (
-          <ActivityIndicator
-            size="small"
-            color={textColor}
-            style={styles.iconRight}
-          />
-        )}
+        <View style={styles.rightSlot}>
+          {loading ? (
+            <ActivityIndicator size="small" color={textColor} />
+          ) : rightIconName ? (
+            <Ionicons name={rightIconName} size={20} color={textColor} />
+          ) : null}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -74,9 +66,9 @@ export default function PrimaryButton({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 14, 
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    borderRadius: 14,
+    height: 56,
+    paddingHorizontal: 18,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -84,18 +76,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    position: "relative",
     width: "100%",
+    gap: 8,
+  },
+  textWrapper: {
+    flex: 1,
+    alignItems: "center",
   },
   text: {
     fontSize: 16,
-    fontWeight: "600",
+    lineHeight: 20,
+    fontWeight: "700",
     letterSpacing: 0.3,
   },
-  iconRight: {
-    position: "absolute",
-    right: 16,
-    top: "50%",
-    transform: [{ translateY: -10 }],
+  rightSlot: {
+    width: 28,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
