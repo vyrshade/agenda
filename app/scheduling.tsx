@@ -11,8 +11,9 @@ import {
   ScrollView,
   View,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import PrimaryButton from "../components/PrimaryButton";
 import { useClients } from "../store/clients";
@@ -38,6 +39,7 @@ export default function Scheduling() {
   const { schedules, addSchedule, updateSchedule, removeSchedule } = useSchedules() as any;
   const router = useRouter();
   const { id, date } = useLocalSearchParams<{ id?: string; date?: string }>();
+  const insets = useSafeAreaInsets();
 
   const editing = typeof id === "string" && id.length > 0;
   const editingSchedule = editing ? schedules.find((s: any) => s.id === id) : undefined;
@@ -289,8 +291,24 @@ export default function Scheduling() {
         animationType="slide"
         onRequestClose={() => setClientModal(false)}
       >
-        <View style={styles.modalContainer}>
-          <Text style={styles.label}>Selecionar Cliente</Text>
+        <SafeAreaView
+          style={[
+            styles.modalSafe,
+            { paddingTop: Math.max(insets.top, 16) } // respeita notch no iOS
+          ]}
+          edges={['top', 'left', 'right', 'bottom']}
+        >
+          {/* Cabeçalho com seta de voltar */}
+          <View style={styles.modalHeader}>
+            <TouchableOpacity
+              onPress={() => setClientModal(false)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={styles.backButton}
+            >
+              <Ionicons name="arrow-back" size={22} color="#111" />
+            </TouchableOpacity>
+            <Text style={[styles.label, { marginBottom: 0 }]}>Selecionar Cliente</Text>
+          </View>
 
           <View style={styles.searchBox}>
             <Ionicons name="search" size={18} color="#888" style={{ marginRight: 8 }} />
@@ -330,12 +348,8 @@ export default function Scheduling() {
               </View>
             }
           />
-          <PrimaryButton
-            title="Fechar"
-            rightIconName="close"
-            onPress={() => setClientModal(false)}
-          />
-        </View>
+          {/* Removido o botão "Fechar" */}
+        </SafeAreaView>
       </Modal>
     </KeyboardAvoidingView>
   );
@@ -383,11 +397,22 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   dangerText: { color: "#ff3b30", fontWeight: "700" },
-  modalContainer: {
+  modalSafe: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 16,
     paddingBottom: 24,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+    gap: 10,
+  },
+  backButton: {
+    height: 32,
+    width: 32,
+    alignItems: "center",
+    justifyContent: "center",
   },
   searchBox: {
     flexDirection: "row",

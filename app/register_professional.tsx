@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useRouter, useLocalSearchParams, Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
@@ -85,79 +85,91 @@ export default function RegisterProfessional() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <Text style={styles.appName}>Agenda</Text>
-          <Text style={styles.subtitle}>Cadastro de Profissionais</Text>
-        </View>
-
-        {/* Mostra o nome do salão */}
-        <View style={styles.salonInfoContainer}>
-          <Text style={styles.salonLabel}>Salão</Text>
-          <Text style={styles.salonName}>{salonName}</Text>
-        </View>
-
-        <View style={styles.form}>
-          
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Nome</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Nome do profissional"
-              placeholderTextColor="#999"
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>e-mail/Telefone</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="seu@email.com"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Senha</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Crie uma senha"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-          </View>
-
-          <TouchableOpacity 
-            style={[styles.button, loading && { opacity: 0.7 }]} 
-            onPress={handleRegister}
-            disabled={loading}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24} // ajuste se houver header/nav
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            {loading ? (
-              <ActivityIndicator color="#FFF" />
-            ) : (
-              <Text style={styles.buttonText}>Cadastrar</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+            <View style={styles.header}>
+              <Text style={styles.appName}>Agenda</Text>
+              <Text style={styles.subtitle}>Cadastro de Profissionais</Text>
+            </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Já tem uma conta? </Text>
-          <Link href="/login" asChild>
-            <TouchableOpacity>
-              <Text style={styles.footerLink}>Fazer Login</Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
+            {/* Mostra o nome do salão */}
+            <View style={styles.salonInfoContainer}>
+              <Text style={styles.salonLabel}>Salão</Text>
+              <Text style={styles.salonName}>{salonName}</Text>
+            </View>
 
-      </ScrollView>
+            <View style={styles.form}>
+              
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Nome</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nome do profissional"
+                  placeholderTextColor="#999"
+                  value={name}
+                  onChangeText={setName}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>e-mail/Telefone</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="seu@email.com"
+                  placeholderTextColor="#999"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Senha</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Crie uma senha"
+                  placeholderTextColor="#999"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity 
+                style={[styles.button, loading && { opacity: 0.7 }]} 
+                onPress={handleRegister}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFF" />
+                ) : (
+                  <Text style={styles.buttonText}>Cadastrar</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>Já tem uma conta? </Text>
+              <Link href="/login" asChild>
+                <TouchableOpacity>
+                  <Text style={styles.footerLink}>Fazer Login</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -169,18 +181,20 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    padding: 24,
-    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 12, // reduz o espaço inicial
+    paddingBottom: 24,
+    justifyContent: 'flex-start', // evita centralizar verticalmente
   },
   header: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   appName: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: 16,
@@ -190,7 +204,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 24,
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
