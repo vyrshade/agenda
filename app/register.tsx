@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -38,57 +38,69 @@ export default function Register() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <Text style={styles.appName}>Agenda</Text>
-          <Text style={styles.subtitle}>Cadastre seu Salão</Text>
-        </View>
-
-        <View style={styles.form}>
-          
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Nome do Estabelecimento</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ex: Salão Le Belle"
-              placeholderTextColor="#999"
-              value={salonName}
-              onChangeText={setSalonName}
-            />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.select({ ios: "padding", android: "height" })}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 16 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
+          <View style={styles.header}>
+            <Text style={styles.appName}>Agenda</Text>
+            <Text style={styles.subtitle}>Cadastre seu Salão</Text>
           </View>
 
-          {/* Campo CPF/CNPJ do Salão */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>CNPJ/CPF Estabelecimento</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="00.000.000/0000-00"
-              placeholderTextColor="#999"
-              value={salonDocument}
-              onChangeText={handleDocumentChange}
-              keyboardType="numeric"
-              maxLength={18}
-            />
-          </View>
+          <View style={styles.form}>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Nome do Estabelecimento</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex: Salão Le Belle"
+                placeholderTextColor="#999"
+                value={salonName}
+                onChangeText={setSalonName}
+                accessibilityLabel="Nome do estabelecimento"
+              />
+            </View>
 
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={handleNext}
-          >
-            <Text style={styles.buttonText}>OK</Text>
-          </TouchableOpacity>
-        </View>
+            {/* Campo CPF/CNPJ do Salão */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>CNPJ/CPF Estabelecimento</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="00.000.000/0000-00"
+                placeholderTextColor="#999"
+                value={salonDocument}
+                onChangeText={handleDocumentChange}
+                keyboardType="numeric"
+                maxLength={18}
+                accessibilityLabel="CNPJ ou CPF do estabelecimento"
+              />
+            </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Já tem uma conta? </Text>
-          <Link href="/login" asChild>
-            <TouchableOpacity>
-              <Text style={styles.footerLink}>Fazer Login</Text>
+            <TouchableOpacity 
+              style={styles.button} 
+              onPress={handleNext}
+            >
+              <Text style={styles.buttonText}>OK</Text>
             </TouchableOpacity>
-          </Link>
-        </View>
+          </View>
 
-      </ScrollView>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Já tem uma conta? </Text>
+            <Link href="/login" asChild>
+              <TouchableOpacity>
+                <Text style={styles.footerLink}>Fazer Login</Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
+
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

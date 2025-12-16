@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -108,79 +108,94 @@ export default function Login() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        
-        <View style={styles.header}>
-          <Text style={styles.appName}>Agenda</Text>
-          <Text style={styles.subtitle}>Bem-vindo de volta</Text>
-        </View>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.select({ ios: "padding", android: "height" })}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 24 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
+          <View style={styles.container}>
+            
+            <View style={styles.header}>
+              <Text style={styles.appName}>Agenda</Text>
+              <Text style={styles.subtitle}>Bem-vindo de volta</Text>
+            </View>
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Estabelecimento (CNPJ)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="00.000.000/0000-00"
-              placeholderTextColor="#999"
-              value={establishmentCnpj}
-              onChangeText={handleCnpjChange}
-              keyboardType="numeric"
-              maxLength={18}
-            />
+            <View style={styles.form}>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Estabelecimento (CNPJ)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="00.000.000/0000-00"
+                  placeholderTextColor="#999"
+                  value={establishmentCnpj}
+                  onChangeText={handleCnpjChange}
+                  keyboardType="numeric"
+                  maxLength={18}
+                  accessibilityLabel="CNPJ ou CPF do estabelecimento"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>E-mail/Telefone</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Digite seu e-mail"
+                  placeholderTextColor="#999"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  accessibilityLabel="E-mail ou telefone"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Senha</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Digite sua senha"
+                  placeholderTextColor="#999"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  accessibilityLabel="Senha"
+                />
+              </View>
+
+              <TouchableOpacity 
+                style={[styles.button, loading && { opacity: 0.7 }]} 
+                onPress={handleLogin}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFF" />
+                ) : (
+                  <Text style={styles.buttonText}>Entrar</Text>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.forgotButton} onPress={openForgotModal}>
+                <Text style={styles.forgotText}>Esqueci minha senha</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>Não tem uma conta? </Text>
+              <Link href="/register" asChild>
+                <TouchableOpacity>
+                  <Text style={styles.footerLink}>Cadastre-se</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+
           </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>E-mail/Telefone</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite seu e-mail"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Senha</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite sua senha"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-          </View>
-
-          <TouchableOpacity 
-            style={[styles.button, loading && { opacity: 0.7 }]} 
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#FFF" />
-            ) : (
-              <Text style={styles.buttonText}>Entrar</Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.forgotButton} onPress={openForgotModal}>
-            <Text style={styles.forgotText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Não tem uma conta? </Text>
-          <Link href="/register" asChild>
-            <TouchableOpacity>
-              <Text style={styles.footerLink}>Cadastre-se</Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
-
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Modal de Recuperação de Senha */}
       <Modal
@@ -205,6 +220,7 @@ export default function Login() {
               autoCapitalize="none"
               keyboardType="email-address"
               autoFocus
+              accessibilityLabel="E-mail para recuperação de senha"
             />
 
             <TouchableOpacity
@@ -240,9 +256,13 @@ const styles = StyleSheet. create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 24,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
-    padding: 24,
     justifyContent: 'center',
   },
   header: {
