@@ -2,9 +2,9 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { ClientsProvider } from "../store/clients";
-import { SchedulesProvider } from "../store/schedules";
-import { auth } from "../src/config/firebase";
+import { ClientsProvider } from "@/store/clients";
+import { SchedulesProvider } from "@/store/schedules";
+import { auth } from "@/src/config/firebase";
 
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);

@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import * as SecureStore from 'expo-secure-store';
-import { auth, db } from '../src/config/firebase';
+import { auth, db } from '@/src/config/firebase';
 
 export default function Login() {
   const router = useRouter();

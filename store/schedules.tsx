@@ -9,7 +9,7 @@ import {
   where, 
   onSnapshot 
 } from "firebase/firestore";
-import { auth, db } from "../src/config/firebase"; 
+import { auth, db } from "@/src/config/firebase"; 
 
 export type Schedule = {
   id: string;

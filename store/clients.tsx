@@ -10,7 +10,7 @@ import {
   onSnapshot,
   getDoc 
 } from "firebase/firestore";
-import { auth, db } from "../src/config/firebase";
+import { auth, db } from "@/src/config/firebase";
 
 export type Client = {
   id: string;

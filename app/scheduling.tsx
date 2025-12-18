@@ -15,10 +15,10 @@ import {
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import PrimaryButton from "../components/PrimaryButton";
-import { useClients } from "../store/clients";
+import PrimaryButton from "@/components/PrimaryButton";
+import { useClients } from "@/store/clients";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useSchedules } from "../store/schedules";
+import { useSchedules } from "@/store/schedules";
 
 const PAYMENT_METHODS = ["Pix", "Dinheiro", "Cartão", "Transferência"];
 

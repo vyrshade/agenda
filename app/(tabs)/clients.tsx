@@ -10,9 +10,9 @@ import {
   TextInput,
   View,
 } from "react-native";
-import ClientCard from "../../components/ClientCard";
-import PrimaryButton from "../../components/PrimaryButton";
-import { useClients } from "../../store/clients";
+import ClientCard from "@/components/ClientCard";
+import PrimaryButton from "@/components/PrimaryButton";
+import { useClients } from "@/store/clients";
 
 const normalize = (s: string) =>
   (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();

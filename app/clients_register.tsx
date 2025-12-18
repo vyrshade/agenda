@@ -13,8 +13,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PrimaryButton from "../components/PrimaryButton";
-import { useClients } from "../store/clients";
+import PrimaryButton from "@/components/PrimaryButton";
+import { useClients } from "@/store/clients";
 
 export default function ClientsRegister() {
   const insets = useSafeAreaInsets();

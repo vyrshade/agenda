@@ -12,7 +12,7 @@ import {
   Image,
 } from "react-native";
 import { doc, getDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db } from "../../src/config/firebase";
+import { auth, db } from "@/src/config/firebase";
 
 interface Professional {
   id: string;

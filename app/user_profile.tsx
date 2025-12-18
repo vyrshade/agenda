@@ -17,8 +17,8 @@ import { collection, getDocs, doc, getDoc, updateDoc, query, where } from "fireb
 import * as SecureStore from 'expo-secure-store';
 import * as ImagePicker from 'expo-image-picker';
 
-import { auth, db } from "../src/config/firebase";
-import { uploadToCloudinary } from "../src/services/cloudinary";
+import { auth, db } from "@/src/config/firebase";
+import { uploadToCloudinary } from "@/src/services/cloudinary";
 
 export default function Profile() {
   const router = useRouter();

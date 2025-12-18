@@ -3,10 +3,10 @@ import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
-import PrimaryButton from "../../components/PrimaryButton";
-import ScheduleCard from "../../components/ScheduleCard";
-import { useSchedules } from "../../store/schedules";
-import { auth } from "../../src/config/firebase";
+import PrimaryButton from "@/components/PrimaryButton";
+import ScheduleCard from "@/components/ScheduleCard";
+import { useSchedules } from "@/store/schedules";
+import { auth } from "@/src/config/firebase";
 
 LocaleConfig.locales["pt-br"] = {
   monthNames: ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],

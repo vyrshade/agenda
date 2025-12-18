@@ -7,8 +7,8 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { useClients } from "../store/clients";
-import { useSchedules } from "../store/schedules";
+import { useClients } from "@/store/clients";
+import { useSchedules } from "@/store/schedules";
 
 const monthNames = [
   "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
