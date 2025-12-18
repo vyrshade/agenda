@@ -1,5 +1,3 @@
-// src/services/cloudinary.ts
-
 const CLOUD_NAME = process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
@@ -11,12 +9,11 @@ export const uploadToCloudinary = async (imageUri: string) => {
 
   const data = new FormData();
 
-  // O Cloudinary precisa desses dados exatos no FormData
   data.append('file', {
     uri: imageUri,
     type: 'image/jpeg',
     name: 'profile_pic.jpg',
-  } as any); // 'as any' é necessário no React Native para evitar erro de tipo no FormData
+  } as any); 
 
   data.append('upload_preset', UPLOAD_PRESET);
 
@@ -29,7 +26,7 @@ export const uploadToCloudinary = async (imageUri: string) => {
     const result = await response.json();
 
     if (result.secure_url) {
-      return result.secure_url; // Retorna o link da imagem (ex: https://res.cloudinary...)
+      return result.secure_url; 
     } else {
       console.error("Erro Cloudinary:", result);
       return null;

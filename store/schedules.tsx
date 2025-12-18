@@ -9,7 +9,7 @@ import {
   where, 
   onSnapshot 
 } from "firebase/firestore";
-import { auth, db } from "../src/config/firebase"; // Ajuste o caminho se necessário
+import { auth, db } from "../src/config/firebase"; 
 
 export type Schedule = {
   id: string;
@@ -21,7 +21,7 @@ export type Schedule = {
   payment?: string | null;
   startTime: string;  // "HH:MM"
   endTime: string;    // "HH:MM"
-  userId?: string;    // Para segurança
+  userId?: string;    
 };
 
 type Ctx = {
@@ -42,7 +42,6 @@ export function SchedulesProvider({ children }: { children: ReactNode }) {
       setUser(currentUser);
 
       if (currentUser) {
-        // Busca apenas agendamentos deste usuário
         const q = query(
           collection(db, "schedules"), 
           where("userId", "==", currentUser.uid)
@@ -54,7 +53,6 @@ export function SchedulesProvider({ children }: { children: ReactNode }) {
             list.push({ id: doc.id, ...doc.data() } as Schedule);
           });
           
-          // Ordenação simples (opcional): Data mais recente primeiro, depois hora
           list.sort((a, b) => {
             if (a.date !== b.date) return a.date.localeCompare(b.date);
             return a.startTime.localeCompare(b.startTime);
@@ -78,7 +76,7 @@ export function SchedulesProvider({ children }: { children: ReactNode }) {
       await addDoc(collection(db, "schedules"), {
         ...s,
         userId: user.uid,
-        createdAt: new Date() // Útil para auditoria
+        createdAt: new Date() 
       });
     } catch (error) {
       console.error("Erro ao criar agendamento:", error);

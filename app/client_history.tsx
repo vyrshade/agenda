@@ -27,7 +27,6 @@ export default function ClientHistory() {
   const { schedules } = useSchedules();
   const { clients } = useClients();
 
-  // mantém caso precise do cliente depois
   clients.find((c) => c.id === id);
 
   // Agrupa por ano-mês (YYYY-MM)
@@ -35,7 +34,7 @@ export default function ClientHistory() {
     const items = schedules
       .filter((s) => s.clientId === id)
       .sort((a, b) => {
-        if (a.date !== b.date) return b.date.localeCompare(a.date); // recentes primeiro
+        if (a.date !== b.date) return b.date.localeCompare(a.date); 
         return a.startTime.localeCompare(b.startTime);
       });
 
@@ -47,7 +46,7 @@ export default function ClientHistory() {
     }
 
     return Array.from(map.entries())
-      .sort((a, b) => b[0].localeCompare(a[0])) // meses recentes primeiro
+      .sort((a, b) => b[0].localeCompare(a[0])) 
       .map(([ym, data]) => ({ title: monthTitle(ym), data }));
   }, [id, schedules]);
 

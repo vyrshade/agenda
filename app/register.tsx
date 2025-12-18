@@ -6,27 +6,23 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Register() {
   const router = useRouter();
   const [salonName, setSalonName] = useState('');
-  const [salonDocument, setSalonDocument] = useState(''); // Estado para CPF/CNPJ do Salão
+  const [salonDocument, setSalonDocument] = useState(''); 
 
-  // Aplica a máscara de Documento enquanto digita
   const handleDocumentChange = (text: string) => {
     setSalonDocument(formatCpfCnpj(text));
   };
 
   const handleNext = async () => {
-    // Validação básica de campos vazios
     if (salonName.trim().length === 0 || salonDocument.trim().length === 0) {
       Alert.alert('Atenção', 'Por favor, preencha todos os campos.');
       return;
     }
 
-    // Validação específica de CPF/CNPJ
     if (!validateCpfCnpj(salonDocument)) {
       Alert.alert('Atenção', 'CPF ou CNPJ inválido.');
       return;
     }
 
-    // Navega para a próxima tela passando os dados do salão
     router.push({
       pathname: '/register_professional',
       params: {

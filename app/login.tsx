@@ -14,12 +14,10 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Estados para o modal de recuperação de senha
   const [forgotModalVisible, setForgotModalVisible] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
 
-  // Aplica a máscara de Documento enquanto digita
   const handleCnpjChange = (text: string) => {
     setEstablishmentCnpj(formatCpfCnpj(text));
   };
@@ -30,7 +28,6 @@ export default function Login() {
       return;
     }
 
-    // Validação específica de CPF/CNPJ
     if (!validateCpfCnpj(establishmentCnpj)) {
       Alert.alert('Atenção', 'CNPJ/CPF do estabelecimento inválido.');
       return;
@@ -46,17 +43,14 @@ export default function Login() {
         const userData = userDoc.data();
         const cleanInputCnpj = establishmentCnpj.replace(/\D/g, '');
         
-        // Verifica se o salonId do usuário corresponde ao CNPJ informado
+      
         if (userData.salonId !== cleanInputCnpj) {
-          await auth.signOut(); // Desloga o usuário
+          await auth.signOut(); 
           Alert.alert('Acesso Negado', 'Este usuário não pertence ao estabelecimento informado.');
           return;
         }
       }
       
-      // SECURITY NOTE: Storing passwords in SecureStore for account switching convenience.
-      // This is encrypted at the device level but has security implications.
-      // For production apps, consider using Firebase Custom Tokens or OAuth refresh tokens instead.
       await SecureStore.setItemAsync(`password_${userCredential.user.uid}`, password);
       
       router.replace('/(tabs)'); 
@@ -102,7 +96,7 @@ export default function Login() {
   };
 
   const openForgotModal = () => {
-    setResetEmail(email); // Preenche com o e-mail já digitado, se houver
+    setResetEmail(email); 
     setForgotModalVisible(true);
   };
 
@@ -197,7 +191,7 @@ export default function Login() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Modal de Recuperação de Senha */}
+      {}
       <Modal
         visible={forgotModalVisible}
         animationType="slide"
@@ -336,7 +330,6 @@ const styles = StyleSheet. create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-  // Estilos do Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

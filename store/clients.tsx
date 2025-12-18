@@ -18,7 +18,7 @@ export type Client = {
   phone: string;
   address?: string;
   userId?: string; 
-  salonId?: string; // Novo campo para identificar o salão
+  salonId?: string; 
 };
 
 type Ctx = {
@@ -35,7 +35,6 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState(auth.currentUser);
   const [salonId, setSalonId] = useState<string | null>(null);
 
-  // 1. Monitora mudanças na autenticação
   useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
@@ -48,7 +47,6 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
     return () => unsubscribeAuth();
   }, []);
 
-  // 2. Busca o salonId do usuário quando ele loga
   useEffect(() => {
     async function fetchUserSalonId() {
       if (!user) return;
@@ -72,14 +70,12 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
     fetchUserSalonId();
   }, [user]);
 
-  // 3. Monitora os clientes filtrando pelo salonId
   useEffect(() => {
     if (!salonId) {
       setClients([]);
       return;
     }
 
-    // Query busca clientes pelo salonId (compartilhado)
     const q = query(
       collection(db, "clients"), 
       where("salonId", "==", salonId)
@@ -91,7 +87,6 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
         clientsList.push({ id: doc.id, ...doc.data() } as Client);
       });
       
-      // Ordena alfabeticamente
       clientsList.sort((a, b) => a.name.localeCompare(b.name));
       
       setClients(clientsList);

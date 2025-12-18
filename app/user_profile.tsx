@@ -24,7 +24,6 @@ export default function Profile() {
   const router = useRouter();
   const [user, setUser] = useState(auth.currentUser);
   
-  // Estado local para guardar dados extras do Firestore
   const [userSalonId, setUserSalonId] = useState<string>("");
 
   const [avatarUrl, setAvatarUrl] = useState(auth.currentUser?.photoURL);
@@ -33,20 +32,18 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Subscribe to auth state changes AND fetch firestore data
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser: User | null) => {
       setUser(currentUser);
       setAvatarUrl(currentUser?.photoURL);
       
       if (currentUser) {
-        // Buscar dados adicionais do usuário atual no Firestore
         try {
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
           if (userDocSnap.exists()) {
             const data = userDocSnap.data();
-            setUserSalonId(data.salonId || ""); // Define o salonId
+            setUserSalonId(data.salonId || ""); 
           }
         } catch (error) {
           console.error("Erro ao buscar dados do usuário:", error);
@@ -119,13 +116,11 @@ export default function Profile() {
     try {
       const usersCollection = collection(db, "users");
       
-      // Filtrar por salonId se disponível
       let usersSnapshot;
       if (userSalonId) {
         const q = query(usersCollection, where("salonId", "==", userSalonId));
         usersSnapshot = await getDocs(q);
       } else {
-        // Se não tiver salonId, busca todos (comportamento anterior)
         usersSnapshot = await getDocs(usersCollection);
       }
       
@@ -181,7 +176,6 @@ export default function Profile() {
       await signOut(auth);
       router.replace("/login");
     } catch {
-      // Falha silenciosa ou log
     }
   };
 
@@ -209,13 +203,13 @@ export default function Profile() {
         )}
       </View>
 
-      {/* Informações do usuário */}
+      {}
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{user?.displayName || "Usuário"}</Text>
         <Text style={styles.email}>{user?.email || "email@exemplo.com"}</Text>
       </View>
 
-      {/* Cards de informações */}
+      {}
       <View style={styles.cardsContainer}>
         <View style={styles.infoCard}>
           <Ionicons name="person-outline" size={24} color="#000" />
@@ -234,7 +228,7 @@ export default function Profile() {
         </View>
       </View>
 
-      {/* Botões */}
+      {}
       <TouchableOpacity style={styles.switchAccountButton} onPress={handleOpenAccountsModal}>
         <Ionicons name="people-outline" size={24} color="#007AFF" />
         <Text style={styles.switchAccountText}>Trocar de conta</Text>
@@ -245,7 +239,7 @@ export default function Profile() {
         <Text style={styles.logoutText}>Sair da conta</Text>
       </TouchableOpacity>
 
-      {/* Modal */}
+      {}
       <Modal
         visible={accountsModalVisible}
         animationType="slide"

@@ -65,7 +65,6 @@ export default function Options() {
         return;
       }
 
-      // Buscar dados do usuário no Firestore
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
 
@@ -77,7 +76,6 @@ export default function Options() {
         if (userSalonId) {
           setSalonId(userSalonId);
           
-          // Buscar dados do salão
           const salonDocRef = doc(db, "salons", userSalonId);
           const salonDocSnap = await getDoc(salonDocRef);
 
@@ -86,12 +84,10 @@ export default function Options() {
             setSalonName(salonData.name || salonNameFromUser || "");
             setSalonDocument(salonData.document || "");
           } else {
-            // Se o salão não existe, use os dados do usuário
             setSalonName(salonNameFromUser || "");
             setSalonDocument("");
           }
           
-          // Buscar profissionais do salão
           fetchProfessionals(userSalonId);
         } else {
           setSalonName(salonNameFromUser || "");
@@ -164,7 +160,7 @@ export default function Options() {
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
 
-        {/* Lista de Profissionais */}
+        {}
         {salonId && (
           <View style={styles.professionalsSection}>
             <Text style={styles.sectionTitle}>Profissionais do Salão</Text>

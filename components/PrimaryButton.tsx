@@ -45,7 +45,7 @@ export default function PrimaryButton({
       disabled={isDisabled}
     >
       <View style={styles.content}>
-        {/* Para manter o texto centralizado, usamos um slot à direita de largura fixa */}
+        {}
         <View style={styles.textWrapper}>
           <Text style={[styles.text, { color: textColor }]} numberOfLines={1}>
             {title}

@@ -2,14 +2,12 @@ export const formatCpfCnpj = (value: string) => {
   const cleanValue = value.replace(/\D/g, '');
   
   if (cleanValue.length <= 11) {
-    // CPF
     return cleanValue
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d{1,2})/, '$1-$2')
       .replace(/(-\d{2})\d+?$/, '$1');
   } else {
-    // CNPJ
     return cleanValue
       .replace(/(\d{2})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
@@ -31,7 +29,6 @@ export const validateCpfCnpj = (val: string) => {
   return false;
 };
 
-// Funções auxiliares simplificadas
 function validateCPF(cpf: string) {
   if (/^(\d)\1+$/.test(cpf)) return false;
   let sum = 0, remainder;
@@ -52,7 +49,5 @@ function validateCPF(cpf: string) {
 
 function validateCNPJ(cnpj: string) {
   if (/^(\d)\1+$/.test(cnpj)) return false;
-  // Validação básica de tamanho já feita, algoritmo completo de CNPJ pode ser adicionado aqui
-  // Para brevidade, verificamos apenas o tamanho neste exemplo, mas recomendo usar lib 'cpf-cnpj-validator'
   return true; 
 }

@@ -132,7 +132,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      {/* Row with date selector and user profile */}
+      {}
       <View style={styles.headerRow}>
         <TouchableOpacity
           style={styles.dateButton}
@@ -150,7 +150,7 @@ export default function Index() {
         <UserDisplayName />
       </View>
 
-      {/* Calendário expansível */}
+      {}
       {calendarOpen && (
         <Calendar
           key={selected}

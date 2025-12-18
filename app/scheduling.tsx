@@ -59,7 +59,7 @@ export default function Scheduling() {
   const [payment, setPayment] = useState<string | null>(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [isSaving, setIsSaving] = useState(false); // Estado de loading
+  const [isSaving, setIsSaving] = useState(false); 
 
   useEffect(() => {
     if (!editingSchedule) return;
@@ -282,7 +282,7 @@ export default function Scheduling() {
             <Text style={styles.dangerText}>Cancelar agendamento</Text>
           </TouchableOpacity>
         )}
-        {/* Espaço extra para garantir rolagem até o fim */}
+        {}
         <View style={{ height: 60 }} />
       </ScrollView>
 
@@ -294,11 +294,11 @@ export default function Scheduling() {
         <SafeAreaView
           style={[
             styles.modalSafe,
-            { paddingTop: Math.max(insets.top, 16) } // respeita notch no iOS
+            { paddingTop: Math.max(insets.top, 16) } 
           ]}
           edges={['top', 'left', 'right', 'bottom']}
         >
-          {/* Cabeçalho com seta de voltar */}
+          {}
           <View style={styles.modalHeader}>
             <TouchableOpacity
               onPress={() => setClientModal(false)}
@@ -348,7 +348,7 @@ export default function Scheduling() {
               </View>
             }
           />
-          {/* Removido o botão "Fechar" */}
+          {}
         </SafeAreaView>
       </Modal>
     </KeyboardAvoidingView>
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 8,
-    paddingBottom: 48, // espaço extra para rolar até o fim
+    paddingBottom: 48, 
   },
   label: { marginBottom: 6 },
   fieldWrapper: {

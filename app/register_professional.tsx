@@ -11,7 +11,6 @@ export default function RegisterProfessional() {
   const router = useRouter();
   const params = useLocalSearchParams();
   
-  // Recebe os dados do salão da tela anterior
   const salonName = params.salonName as string || '';
   const salonDocument = params.salonDocument as string || '';
   
@@ -21,7 +20,6 @@ export default function RegisterProfessional() {
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    // Validação básica de campos vazios
     if (name.trim().length === 0 || email.trim().length === 0 || password.trim().length === 0) {
       Alert.alert('Atenção', 'Por favor, preencha todos os campos.');
       return;
@@ -34,36 +32,31 @@ export default function RegisterProfessional() {
 
     setLoading(true);
     try {
-      // 1. Cria o usuário na autenticação (Authentication)
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // 2. Atualiza o perfil do usuário (Authentication)
       await updateProfile(user, {
         displayName: name
       });
 
-      // 3. Cria/Atualiza o documento do salão no Firestore
-      // Usamos o documento (CNPJ/CPF) como ID do salão para facilitar lookup
-      const salonId = salonDocument.replace(/\D/g, ''); // Remove formatação
+      
+      const salonId = salonDocument.replace(/\D/g, ''); 
       await setDoc(doc(db, "salons", salonId), {
         name: salonName,
         document: salonDocument,
         ownerId: user.uid,
         createdAt: new Date().toISOString(),
-      }, { merge: true }); // merge: true para não sobrescrever se já existir
+      }, { merge: true }); 
 
-      // 4. Salva os dados do profissional no Banco de Dados (Firestore)
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         name: name,
         email: email,
-        salonId: salonId, // Vincula o usuário ao salão
+        salonId: salonId,
         salonName: salonName,
         createdAt: new Date().toISOString(),
       });
 
-      // 5. Salva senha localmente para troca de contas (Nota de segurança mantida)
       await SecureStore.setItemAsync(`password_${user.uid}`, password);
 
       Alert.alert('Sucesso', 'Conta criada com sucesso!', [
@@ -88,7 +81,7 @@ export default function RegisterProfessional() {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24} // ajuste se houver header/nav
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24} 
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView
@@ -101,7 +94,7 @@ export default function RegisterProfessional() {
               <Text style={styles.subtitle}>Cadastro de Profissionais</Text>
             </View>
 
-            {/* Mostra o nome do salão */}
+            {}
             <View style={styles.salonInfoContainer}>
               <Text style={styles.salonLabel}>Salão</Text>
               <Text style={styles.salonName}>{salonName}</Text>
@@ -182,9 +175,9 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingTop: 12, // reduz o espaço inicial
+    paddingTop: 12, 
     paddingBottom: 24,
-    justifyContent: 'flex-start', // evita centralizar verticalmente
+    justifyContent: 'flex-start',
   },
   header: {
     alignItems: 'center',
